@@ -1,0 +1,120 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace must indicate mapper interface full package path . It is an alias here-->	
+<mapper namespace = "SpringBootDemo.Services.PersonAddressMapper">
+       
+	 <!--
+	 We have two select statements: one to load the Person, 
+	 the other to load the Address, and the Person's resultMap personResult 
+	 describes that the select Address statement should be used to load its 
+	 Address property.
+	 -->
+	<select id="selectPerson" resultMap="personResult">
+	  SELECT * FROM Person WHERE PERSON_ID = #{id}
+	</select> 
+
+	 <!-- the column id passed should be from the Person table
+	 because you are joining addressId from Person to Id from Address table
+	 and hence use addressId from Person for value to be passed to selectAddress 
+	 In other words, first get the Person object for id passed, then
+	 get the addressID from the Person retrieved and pass that value to the 
+	 column field below. this field value will be used for selectAddress
+	 query.-->
+	 
+	 <resultMap id="personResult" type="Person">
+  		<association property="address" column="{id=addressId,}" 
+  					 javaType="Address" select="selectAddress"/>
+	</resultMap> 
+ 
+  	<select id = "selectAddress" resultType = "Address">
+      SELECT * FROM Address WHERE ID = #{id};
+   	</select>
+
+	
+	<!-- Collection example 1 -->
+	<!-- Result map is used if an object has collections and associations
+	that needs to be auto mapped. -->
+	<select id="getPersonsForAddress" resultMap="addressResult">
+	  SELECT * FROM Address WHERE id = #{id}
+	</select> 
+
+	<resultMap id="addressResult" type="Address">	
+	<id property = "id" column = "ID"/>
+  		<collection  property="personList" column="id" select="getPersons"/>
+	</resultMap>
+	
+	<!-- THe address field in person object will be null as we are not using 
+	a resultMap below. We are using a result type instead.
+	No association to address object is defined below -->
+	
+	<select id="getPersons" resultType="Person"> 
+	  SELECT * FROM Person WHERE addressId = #{id}
+	</select> 
+	
+	<!-- Collection example 2 -->
+	<!-- resultMap is of type Address if you look below 
+	thus returns just Address-->
+	
+	<select id="getAddressAndPersons" resultMap="addressMap">
+		  select * from Address A left outer join Personal P on A.id = P.addressId
+		  where A.id = #{id}
+	</select>
+	
+	<!-- This style definition is needed if you have to extract address as well as
+	a collection of Persons object within address object in a single SQL call. 
+	This will return the addressMap as a single address object after the queries 
+	are executed. It will NOT return an array.-->
+
+	<resultMap id="addressMap" type="Address">
+	  	<id property = "id" column = "ID"/>
+		<result property = "address1" column = "address1"/>
+		<result property = "address2" column = "address2"/>
+		<result property = "city" column = "city"/>
+		<result property = "state" column = "state"/>
+		<result property = "postalcode" column = "postalcode"/>
+		<result property = "country" column = "country"/>
+		<collection property="personList" resultMap="personMap" />
+		<!-- No need to explicitly mention ofType="Person"  for collection -->
+	</resultMap>
+   	
+   	<resultMap id = "personMap" type = "Person">
+   		<!-- id References Personal table -->
+   		<id property="person_id" column="person_id"/>     
+  		<result property="first_name" column="first_name"/>
+  		<result property="last_name" column="last_name"/>
+  		<result property="age" column="age"/>
+  		<result property="phone" column="phone"/>
+      	<result property="email" column="email"/>
+      	<association property="address" resultMap="address" />
+   	</resultMap>   
+	<resultMap id="address" type="Address">
+	  	<id property = "id" column = "ID"/>
+		<result property = "address1" column = "address1"/>
+		<result property = "address2" column = "address2"/>
+		<result property = "city" column = "city"/>
+		<result property = "state" column = "state"/>
+		<result property = "postalcode" column = "postalcode"/>
+		<result property = "country" column = "country"/>
+	</resultMap>
+ 	
+  	<!-- Collection example 3 - using single sql statement and a separate Bean-->
+	<!-- resultMap is of type AddressBean if you look below 
+	thus returns list of results-->
+	
+	<select id="getAddressBean" resultMap="addressBeanMap">
+		  select * from Address A left outer join Personal P on A.id = P.addressId
+		  where A.id = #{id}
+	</select>
+	<!-- Associations are results map themselves. If javatype is used with association,
+	then define all the properties within association tag otherwise, refer to a 
+	resultMap as shown below -->  
+	<resultMap id="addressBeanMap" type="AddressBean">	
+		<association property="address" resultMap="address" />
+		<association  property="person"  resultMap="personMap" />
+	</resultMap>
+	    	
+	
+	
+</mapper>

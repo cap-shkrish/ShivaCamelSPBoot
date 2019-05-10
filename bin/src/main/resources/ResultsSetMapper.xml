@@ -1,0 +1,15 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- namespace must indicate mapper interface full package path. -->	
+<mapper namespace = "SpringBootDemo.Services.ResultsSetMapper">
+
+        
+<select id="selectAddress"  resultMap="SpringBootDemo.Services.PersonAddressMapper.addressMap" statementType="CALLABLE">
+  {call getAddressPerson(#{id,jdbcType=INTEGER,mode=IN})}
+</select>   	
+	
+	
+</mapper>

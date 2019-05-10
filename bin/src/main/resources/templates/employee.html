@@ -1,0 +1,84 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+	<h3>Welcome, Enter The Employee Details</h3>
+
+	<form action="#" th:action="@{/employeeView}" th:object="${employee}"
+		method="post">
+		<table>
+			<tr>
+				<td>Name:</td>
+				<!--  <td><input type="text" th:field="*{name}"></td> -->
+				<td>
+					<div
+						th:classappend="${#fields.hasErrors('name')} ? 'input-icon right' : ''">
+						<i th:if="${#fields.hasErrors('name')}"
+							class="fa fa-exclamation tooltips"
+							data-original-title="please enter a valid first name"
+							data-container="body">
+							</i> 
+							<input type="text"
+							class="form-control" maxlength="32" th:field="*{name}"
+							placeholder="Between 1 and 32 characters" /> 
+							<span
+							th:if="${#fields.hasErrors('name')}" class="help-block"
+							th:errors="*{name}">
+							</span>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>ID:</td>
+				<td><input type="text" th:field="*{id}"></td>
+			</tr>
+			<tr>
+				<td>Contact Number:</td>
+				<td>
+					<div
+						th:classappend="${#fields.hasErrors('contactNumber')} ? 'input-icon right' : ''">
+						<i th:if="${#fields.hasErrors('contactNumber')}"
+							class="fa fa-exclamation tooltips"
+							data-original-title="please enter a valid Contact Number"
+							data-container="body">
+							</i> 
+							<input type="text"
+							class="form-control" maxlength="12" th:field="*{contactNumber}"
+							placeholder="Between 8 and 12 characters" /> 
+							<span
+							th:if="${#fields.hasErrors('contactNumber')}" class="help-block"
+							th:errors="*{contactNumber}">
+							</span>
+					</div>
+				</td>
+				
+			</tr>
+
+			<tr>
+				<td>Employee DOB:</td>
+				<td><input type="text" th:field="*{employeeDOB}"></td>
+			</tr>
+			<tr>
+				<td>State:</td>
+				<td><select th:field="*{employeeSkillsValue}">
+						<option th:each="state : *{employeeSkills}" th:value="${state}"
+							th:text="${state}"></option>
+				</select></td>
+			</tr>
+
+			<tr>
+				<td><input type="submit" value="Submit" /></td>
+			</tr>
+
+		</table>
+	</form>
+
+	<div align="center">
+		<h1>
+			<a href="/index">Go to Index Page</a>
+		</h1>
+	</div>
+
+</body>
+</html>
+
