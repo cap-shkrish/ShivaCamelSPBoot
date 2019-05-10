@@ -1,0 +1,32 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Employee View Page</title>
+</head>
+<body>
+	<p th:text="'message1: ' + ${message}" />
+	<h4>
+		Using Controller Model Attribute
+		<p th:text="'message2: ' + ${message2}" />
+	</h4>
+	<form action="#" th:action="@{/employeeview}" th:object="${employee}">
+		<table>
+			<tr>
+				<h4>
+					<p th:text="'Name: ' + ${employee.name}" />
+					<p th:text="'Id: ' + ${employee.id}" />
+					<p th:text="'Contact Number: ' + ${employee.contactNumber}" />
+					<p th:text="'DOB: ' + ${employee.employeeDOB}" />
+					<p th:text="'State: ' + ${employee.employeeSkillsValue}" />
+				</h4>
+				<div align="center">
+					<a href="/index">Go to Index Page</a>
+				</div>
+
+			</tr>
+		</table>
+	</form>
+
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<body>
+ 		<form action="#" th:action="@{/cap}" th:object="${employee}"
+			method="post">
+			<p>
+				Kit Number : <input type="text" name="kitNumber" />
+			</p>
+			<p>
+				CAP ID : <input type="text" name="capId" />
+			</p>
+			<input type="submit" value="Submit" />
+		</form>
+ 
+</body>
+</html>

@@ -1,0 +1,155 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace must indicate mapper interface full package path . It is an alias here-->	
+<mapper namespace = "SpringBootDemo.Services.StudentMapper">
+
+   <insert id = "insert" parameterType = "Student">
+      INSERT INTO Student (NAME, AGE, PHONE, EMAIL ) VALUES (#{name}, #{age}, #{phone}, #{email});
+			
+      <selectKey keyProperty = "id" resultType = "int" order = "AFTER">
+         select last_insert_id() as id
+      </selectKey>   
+   </insert>
+   
+    <select id="getRowCount" resultType="int">
+        select count(*) from Student
+    </select>
+   
+ 	
+   <select id = "getAll" resultMap = "result">
+      SELECT * FROM Student; 
+   </select>
+    
+   <select id = "getById" parameterType = "int" resultMap = "result">
+      SELECT * FROM Student WHERE ID = #{id};
+   </select>
+   
+
+   <resultMap id = "result" type = "Student">
+      <result property = "id" column = "ID"/>
+      <result property = "name" column = "NAME"/>
+      <result property = "age" column = "AGE"/>
+      <result property = "phone" column = "PHONE"/>
+      <result property = "email" column = "EMAIL"/>
+   </resultMap>   
+   
+   <update id = "update" parameterType = "Student">
+      UPDATE Student SET 
+      	 NAME = #{name},  
+         AGE = #{age}, 
+         PHONE = #{phone}, 
+         EMAIL = #{email} 
+      WHERE ID = #{id};
+   </update>
+   
+   <delete id = "deleteById" parameterType = "int">
+      DELETE from Student WHERE ID = #{id};
+   </delete>
+   
+<!-- Important things for stored procedures:
+    1. Must set the statement type to CALLABLE
+    2. Must use the JDBC standard escape sequence for stored procedures:
+       {call xxx (parm1, parm2)}
+    3. Must set the MODE of all parameters (IN, OUT, INOUT)
+    4. All IN, OUT, and INOUT parameters must be a part of the
+       parameterType or parameterMap (discouraged).  The only exception
+       is if you are using a Map as a parameter object.  In that case you
+       do not need to add OUT parameters to the map before calling, MyBatis
+       will add them for you automatically.
+    5. resultType or resultMap (more typically) is only used if
+       the procedure returns a result set. IMPORTANT: Oracle ref
+       cursors are usually returned as parameters, NOT directly
+       from the stored proc.  So with ref cursors, resultMap
+       and/or resultType is usually not used.  
+
+ -->   
+   
+   <select id = "callById" resultMap = "result" parameterType = "int" statementType = "CALLABLE">
+      {call Read_StudentById(#{id, jdbcType = INTEGER, mode = IN})}
+   </select>   
+   
+   <select id = "callByAge" resultMap = "result" parameterType = "int" statementType = "CALLABLE">
+      {call Read_StudentByAge(#{age, jdbcType = INTEGER, mode = IN})}
+   </select>   
+
+   <select id = "callByNameAge" resultMap = "result" parameterType = "Student" statementType = "CALLABLE">
+      {call Read_StudentByNameAge(#{name, jdbcType = VARCHAR, mode = IN},
+      							#{age, jdbcType = INTEGER, mode = IN})}
+   </select>   
+ 
+	<select id = "getRecByName" parameterType = "Student" resultType = "Student">
+	
+	   SELECT * FROM Student		 
+	   <if test = "name != null">
+	      WHERE name LIKE #{name}
+	   </if> 
+	</select>
+	 
+	<select id = "getRecByName_Id" parameterType = "Student" resultType = "Student">
+	
+	   SELECT * FROM Student		 
+	   <if test = "name != null">
+	      WHERE name LIKE #{name}
+	   </if>
+	
+	   <if test = "id != null">
+	      AND id LIKE #{id}
+	   </if> 
+	</select>
+
+<!--	 
+ The following example will search only by name if it is provided, 
+ and if the name or age is also not given, then only by id −
+  -->
+   
+	<select id = "getRecByName_age" parameterType = "Student" resultType = "Student">
+	   SELECT * FROM Student		 
+	   <if test = "name != null">
+	      WHERE name LIKE #{name}
+	   </if>
+	
+	   <if test = "age != null">
+	      AND age LIKE #{age}
+	   </if>  
+	</select>
+
+<!--	 
+ The following example will search only by name if it is provided, 
+ and if the name or age is also not given, then only by id −
+  -->
+   
+	<select id = "getRecByName_Id_age" parameterType = "Student" resultType = "Student">
+	   SELECT * FROM Student WHERE id != 0
+		
+	   <choose>
+	      <when test = "name != null">
+	         AND name LIKE #{name}
+	      </when> 
+	
+	      <when test = "age != null">
+	         AND age LIKE #{age}
+	      </when>
+	   </choose>		
+	</select>   
+	
+<!-- 
+The where element inserts a WHERE only when the containing tags return any content. 
+Furthermore, if that content begins with AND or OR, it knows to strip it off.
+ -->	
+	<select id = "getName_Id_phone" parameterType = "Student" resultType = "Student">
+	   SELECT * FROM Student
+		
+	   <where>
+	      <if test = "id != null">
+	         id = #{id}
+	      </if>
+	
+	      <if test = "name != null">
+	         AND name LIKE #{name}
+	      </if>
+	   </where>			
+	</select>
+    	
+</mapper>
