@@ -1,0 +1,100 @@
+DELETE from person where person_id > 7;
+
+CREATE TABLE springschema.Student(
+      ID int(10) NOT NULL AUTO_INCREMENT,
+      NAME varchar(50) NOT NULL,
+      AGE int(3) NOT NULL,
+      PHONE int(15) ,
+      EMAIL varchar(80) ,
+      PRIMARY KEY (`ID`)
+);
+
+CREATE TABLE springschema.Address(
+	Id          INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	Address1    VARCHAR(120) NOT NULL,
+	Address2    VARCHAR(120),
+	City        VARCHAR(100) NOT NULL,
+	State       CHAR(2) NOT NULL,
+	Country     CHAR(20) NOT NULL,
+	PostalCode  VARCHAR(16) NOT NULL
+);
+
+CREATE TABLE springschema.Person(
+      ID int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+      FIRST_NAME varchar(50) NOT NULL,
+      LAST_NAME varchar(50) NOT NULL,
+      AGE int(10) NOT NULL,
+      PHONE varchar(20) ,
+      EMAIL varchar(80),
+	AddressId int,
+	CONSTRAINT FK_Address1 FOREIGN KEY (AddressId )
+	REFERENCES ADDRESS(ID) 
+);
+
+CREATE TABLE springschema.Personal(
+      PERSON_ID int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+      FIRST_NAME varchar(50) NOT NULL,
+      LAST_NAME varchar(50) NOT NULL,
+      AGE int(10) NOT NULL,
+      PHONE varchar(20) ,
+      EMAIL varchar(80),
+	AddressId int,
+	CONSTRAINT FK_Address2 FOREIGN KEY (AddressId )
+	REFERENCES ADDRESS(ID) 
+);
+
+
+CREATE TABLE springschema.Orders (
+    ID int NOT NULL auto_increment PRIMARY KEY,
+    OrderNumber int NOT NULL,
+    AddressID int  NOT NULL,
+    CONSTRAINT FK_Address FOREIGN KEY (AddressID)
+    REFERENCES Address(Id)
+);
+
+
+
+
+
+DELIMITER //
+   
+CREATE PROCEDURE springschema.Read_StudentByNameAge (IN std_name varchar(40), IN std_age INT)
+	
+BEGIN      
+SELECT * FROM STUDENT WHERE AGE = std_age AND NAME = std_name; 
+END// 
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE springschema.Read_StudentById (IN std_id INT)
+BEGIN    
+SELECT * FROM STUDENT WHERE ID = std_id; 
+END// 
+
+DELIMITER ;
+
+DELIMITER // 
+   
+CREATE PROCEDURE springschema.Read_StudentByAge ( IN std_age INT)	 
+BEGIN     
+SELECT * FROM STUDENT WHERE AGE = std_age;  
+END// 	
+
+DELIMITER ;
+
+
+================================================
+
+
+
+SELECT P.PERSON_ID, A.address1, A.state, P.FIRST_NAME, D.DEPARTMENT_NAME, C.COMPANY_NAME
+		    FROM(Person P, Address A)
+            INNER JOIN Department D on D.ID = P.DEPARTMENT_ID
+            INNER JOIN Company C on D.COMPANYID = C.ID
+ 		    WHERE(
+            P.ADDRESSID = A.ID and 
+            P.FIRST_NAME like 'Johann');
+
+
