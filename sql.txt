@@ -4,7 +4,7 @@ CREATE TABLE springschema.Student(
       ID int(10) NOT NULL AUTO_INCREMENT,
       NAME varchar(50) NOT NULL,
       AGE int(3) NOT NULL,
-      PHONE int(15) ,
+      PHONE varchar(15) ,
       EMAIL varchar(80) ,
       PRIMARY KEY (`ID`)
 );
@@ -44,7 +44,7 @@ CREATE TABLE springschema.Personal(
 );
 
 
-CREATE TABLE springschema.Orders (
+CREATE TABLE Orders (
     ID int NOT NULL auto_increment PRIMARY KEY,
     OrderNumber int NOT NULL,
     AddressID int  NOT NULL,
@@ -58,28 +58,37 @@ CREATE TABLE springschema.Orders (
 
 DELIMITER //
    
-CREATE PROCEDURE springschema.Read_StudentByNameAge (IN std_name varchar(40), IN std_age INT)
+CREATE PROCEDURE Read_StudentByNameAge (IN std_name varchar(40), IN std_age INT)
 	
 BEGIN      
-SELECT * FROM STUDENT WHERE AGE = std_age AND NAME = std_name; 
+SELECT * FROM Student WHERE AGE = std_age AND NAME = std_name; 
 END// 
 
 DELIMITER ;
 
 DELIMITER //
 
-CREATE PROCEDURE springschema.Read_StudentById (IN std_id INT)
+CREATE PROCEDURE Read_StudentById (IN std_id INT)
 BEGIN    
-SELECT * FROM STUDENT WHERE ID = std_id; 
+SELECT * FROM Student WHERE ID = std_id; 
 END// 
 
 DELIMITER ;
 
 DELIMITER // 
    
-CREATE PROCEDURE springschema.Read_StudentByAge ( IN std_age INT)	 
+CREATE PROCEDURE Read_StudentByAge ( IN std_age INT)	 
 BEGIN     
-SELECT * FROM STUDENT WHERE AGE = std_age;  
+SELECT * FROM Student WHERE AGE = std_age;  
+END// 	
+
+DELIMITER ;
+
+DELIMITER // 
+   
+CREATE PROCEDURE getAddressPerson ( IN std_id INT)	 
+BEGIN     
+SELECT * FROM Person WHERE person_id = std_id;  
 END// 	
 
 DELIMITER ;
@@ -96,5 +105,16 @@ SELECT P.PERSON_ID, A.address1, A.state, P.FIRST_NAME, D.DEPARTMENT_NAME, C.COMP
  		    WHERE(
             P.ADDRESSID = A.ID and 
             P.FIRST_NAME like 'Johann');
+
+=====================================================
+
+Postgresql Stored procedure function
+
+CREATE OR REPLACE FUNCTION Read_StudentByNameAge (IN std_name character varying,IN std_age integer )
+	RETURNS SETOF public.Student  AS
+$BODY$
+	SELECT * FROM public.Student WHERE AGE = std_age AND NAME = 	std_name;
+$BODY$
+LANGUAGE sql;
 
 
